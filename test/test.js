@@ -5,68 +5,44 @@ var pcsc = require('../lib/pcsclite');
 describe('Testing PCSCLite private', function() {
 
     describe('#start()', function() {
-        before(function() {
-            this.clock = sinon.useFakeTimers();
-        });
-
         it('#start() stub', function(done) {
-            var self = this;
             var p = pcsc();
-            var stub = sinon.stub(p, 'start', function(my_cb) {
-                var times = 0;
-                setInterval(function() {
-                    switch (++ times) {
-                        case 1:
-                            my_cb(undefined, new Buffer("MyReader\0\0"));
-                            self.clock.tick(1000);
-                        break;
+            var stub = sinon.stub(p, 'start');
 
-                        case 2:
-                            my_cb(undefined, new Buffer("MyReader"));
-                        break;
-
-                        case 3:
-                            my_cb(undefined, new Buffer("MyReader1\0MyReader2\0\0"));
-                        break;
-                    }
-                }, 1000);
-                self.clock.tick(1000);
+            stub.callsFake(function(my_cb) {
+                my_cb(undefined, Buffer.from("MyReader\0\0"));
+                my_cb(undefined, Buffer.from("MyReader"));
+                my_cb(undefined, Buffer.from("MyReader1\0MyReader2\0\0"));
             });
 
             var times = 0;
             p.on('reader', function(reader) {
-                reader.close();
-                switch (++ times) {
+                switch (++times) {
                     case 1:
                         reader.name.should.equal("MyReader");
-                    break;
-
+                        break;
                     case 2:
                         reader.name.should.equal("MyReader1");
-                    break;
-
+                        break;
                     case 3:
                         reader.name.should.equal("MyReader2");
                         p.close();
                         done();
-                    break;
+                        break;
                 }
             });
         });
-
-        after(function() {
-            this.clock.restore();
-        });
     });
 });
+
 
 describe('Testing CardReader private', function() {
 
     var get_reader = function() {
         var p = pcsc();
-        var stub = sinon.stub(p, 'start', function(my_cb) {
+        var stub = sinon.stub(p, 'start').callsFake(function(my_cb) {
             /* "MyReader\0" */
-            my_cb(undefined, new Buffer("MyReader\0\0"));
+            my_cb(undefined, Buffer.from("MyReader\0\0"));
         });
 
         return p;
@@ -77,7 +53,7 @@ describe('Testing CardReader private', function() {
         it('#_connect() success', function(done) {
             var p = get_reader();
             p.on('reader', function(reader) {
-                var connect_stub = sinon.stub(reader, '_connect', function(share_mode,
+                var connect_stub = sinon.stub(reader, '_connect').callsFake(function(share_mode,
                                                                            protocol,
                                                                            connect_cb) {
                     connect_cb(undefined, 1);
@@ -95,7 +71,7 @@ describe('Testing CardReader private', function() {
             var p = get_reader();
             p.on('reader', function(reader) {
                 var cb = sinon.spy();
-                var connect_stub = sinon.stub(reader, '_connect', function(share_mode,
+                var connect_stub = sinon.stub(reader, '_connect').callsFake(function(share_mode,
                                                                            protocol,
                                                                            connect_cb) {
                     connect_cb("");
@@ -127,7 +103,7 @@ describe('Testing CardReader private', function() {
             p.on('reader', function(reader) {
                 reader.connected = true;
                 var cb = sinon.spy();
-                var connect_stub = sinon.stub(reader, '_disconnect', function(disposition,
+                var connect_stub = sinon.stub(reader, '_disconnect').callsFake(function(disposition,
                                                                               disconnect_cb) {
                     disconnect_cb(undefined);
                 });
@@ -142,7 +118,7 @@ describe('Testing CardReader private', function() {
             p.on('reader', function(reader) {
                 reader.connected = true;
                 var cb = sinon.spy();
-                var connect_stub = sinon.stub(reader, '_disconnect', function(disposition,
+                var connect_stub = sinon.stub(reader, '_disconnect').callsFake(function(disposition,
                                                                               disconnect_cb) {
                     disconnect_cb("");
                 });
@@ -156,7 +132,7 @@ describe('Testing CardReader private', function() {
             var p = get_reader();
             p.on('reader', function(reader) {
                 var cb = sinon.spy();
-                var connect_stub = sinon.stub(reader, '_disconnect', function(disposition,
+                var connect_stub = sinon.stub(reader, '_disconnect').callsFake(function(disposition,
                                                                               disconnect_cb) {
                     disconnect_cb(undefined);
                 });
