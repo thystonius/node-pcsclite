@@ -1,10 +1,7 @@
 #include "pcsclite.h"
 #include "cardreader.h"
 
-using namespace v8;
-using namespace node;
-
-void init_all(Local<Object> target) {
+void init_all(v8::Local<v8::Object> target) {
     PCSCLite::init(target);
     CardReader::init(target);
 }
