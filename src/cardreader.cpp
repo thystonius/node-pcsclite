@@ -363,14 +363,20 @@ void CardReader::HandleReaderStatusChange(uv_async_t *handle, int status) {
                 Nan::CopyBuffer(reinterpret_cast<char*>(ar->atr), ar->atrlen).ToLocalChecked()
             };
 
-            Nan::Call(Nan::Callback(Nan::New(async_baton->callback)), argc, argv);
+            Nan::Callback(Nan::New(async_baton->callback)).Call(
+                argc,
+                argv,
+                &Nan::AsyncResource("node-pcsclite-cardreader-statuschange-callback"));
         }
     } else {
         Local<Value> err = Nan::Error(error_msg("SCardGetStatusChange", ar->result).c_str());
         // Prepare the parameters for the callback function.
         const unsigned int argc = 1;
         Local<Value> argv[argc] = { err };
-        Nan::Call(Nan::Callback(Nan::New(async_baton->callback)), argc, argv);
+        Nan::Callback(Nan::New(async_baton->callback)).Call(
+            argc,
+            argv,
+            &Nan::AsyncResource("node-pcsclite-cardreader-statuschange-callback"));
     }
 
     if (ar->do_exit) {
@@ -381,7 +387,11 @@ void CardReader::HandleReaderStatusChange(uv_async_t *handle, int status) {
             Nan::New("_end").ToLocalChecked(), // event name
         };
 
-        Nan::AsyncResource("cardreader-emit-callback").runInAsyncScope(async_baton->reader->handle(), "emit", 1, argv);
+        Nan::AsyncResource("node-pcsclite-cardreader-emit-callback").runInAsyncScope(
+            async_baton->reader->handle(),
+            "emit",
+            1,
+            argv);
     }
 
     if (reader->m_status_thread) {
@@ -484,7 +494,10 @@ void CardReader::AfterConnect(uv_work_t* req, int status) {
         // Prepare the parameters for the callback function.
         const unsigned argc = 1;
         Local<Value> argv[argc] = { err };
-        Nan::Call(Nan::Callback(Nan::New(baton->callback)), argc, argv);
+        Nan::Callback(Nan::New(baton->callback)).Call(
+            argc,
+            argv,
+            &Nan::AsyncResource("node-pcsclite-cardreader-connect-callback"));
     } else {
         Nan::Set(baton->reader->handle(), Nan::New(connected_symbol), Nan::True());
         const unsigned argc = 2;
@@ -493,7 +506,10 @@ void CardReader::AfterConnect(uv_work_t* req, int status) {
             Nan::New<Number>(cr->card_protocol)
         };
 
-        Nan::Call(Nan::Callback(Nan::New(baton->callback)), argc, argv);
+        Nan::Callback(Nan::New(baton->callback)).Call(
+            argc,
+            argv,
+            &Nan::AsyncResource("node-pcsclite-cardreader-connect-callback"));
     }
 
     // The callback is a permanent handle, so we have to dispose of it manually.
@@ -539,7 +555,10 @@ void CardReader::AfterDisconnect(uv_work_t* req, int status) {
         // Prepare the parameters for the callback function.
         const unsigned argc = 1;
         Local<Value> argv[argc] = { err };
-        Nan::Call(Nan::Callback(Nan::New(baton->callback)), argc, argv);
+        Nan::Callback(Nan::New(baton->callback)).Call(
+            argc,
+            argv,
+            &Nan::AsyncResource("node-pcsclite-cardreader-disconnect-callback"));
     } else {
         Nan::Set(baton->reader->handle(), Nan::New(connected_symbol), Nan::False());
         const unsigned argc = 1;
@@ -547,7 +566,10 @@ void CardReader::AfterDisconnect(uv_work_t* req, int status) {
             Nan::Null()
         };
 
-        Nan::Call(Nan::Callback(Nan::New(baton->callback)), argc, argv);
+        Nan::Callback(Nan::New(baton->callback)).Call(
+            argc,
+            argv,
+            &Nan::AsyncResource("node-pcsclite-cardreader-disconnect-callback"));
     }
 
     // The callback is a permanent handle, so we have to dispose of it manually.
@@ -600,7 +622,10 @@ void CardReader::AfterTransmit(uv_work_t* req, int status) {
         // Prepare the parameters for the callback function.
         const unsigned argc = 1;
         Local<Value> argv[argc] = { err };
-        Nan::Call(Nan::Callback(Nan::New(baton->callback)), argc, argv);
+        Nan::Callback(Nan::New(baton->callback)).Call(
+            argc,
+            argv,
+            &Nan::AsyncResource("node-pcsclite-cardreader-transmit-callback"));
     } else {
         const unsigned argc = 2;
         Local<Value> argv[argc] = {
@@ -608,7 +633,10 @@ void CardReader::AfterTransmit(uv_work_t* req, int status) {
             Nan::CopyBuffer(reinterpret_cast<char*>(tr->data), tr->len).ToLocalChecked()
         };
 
-        Nan::Call(Nan::Callback(Nan::New(baton->callback)), argc, argv);
+        Nan::Callback(Nan::New(baton->callback)).Call(
+            argc,
+            argv,
+            &Nan::AsyncResource("node-pcsclite-cardreader-transmit-callback"));
     }
 
 
@@ -664,7 +692,10 @@ void CardReader::AfterControl(uv_work_t* req, int status) {
         // Prepare the parameters for the callback function.
         const unsigned argc = 1;
         Local<Value> argv[argc] = { err };
-        Nan::Call(Nan::Callback(Nan::New(baton->callback)), argc, argv);
+        Nan::Callback(Nan::New(baton->callback)).Call(
+            argc,
+            argv,
+            &Nan::AsyncResource("node-pcsclite-cardreader-control-callback"));
     } else {
         const unsigned argc = 2;
         Local<Value> argv[argc] = {
@@ -672,7 +703,10 @@ void CardReader::AfterControl(uv_work_t* req, int status) {
             Nan::New<Number>(cr->len)
         };
 
-        Nan::Call(Nan::Callback(Nan::New(baton->callback)), argc, argv);
+        Nan::Callback(Nan::New(baton->callback)).Call(
+            argc,
+            argv,
+            &Nan::AsyncResource("node-pcsclite-cardreader-control-callback"));
     }
 
 

@@ -187,10 +187,16 @@ void PCSCLite::HandleReaderStatusChange(uv_async_t *handle, int status) {
             Nan::CopyBuffer(ar->readers_name, ar->readers_name_length).ToLocalChecked()
         };
 
-        Nan::Call(Nan::Callback(Nan::New(async_baton->callback)), argc, argv);
+        Nan::Callback(Nan::New(async_baton->callback)).Call(
+            argc,
+            argv,
+            &Nan::AsyncResource("node-pcsclite-statuschange-callback"));
     } else {
         Local<Value> argv[1] = { Nan::Error(ar->err_msg.c_str()) };
-        Nan::Call(Nan::Callback(Nan::New(async_baton->callback)), 1, argv);
+        Nan::Callback(Nan::New(async_baton->callback)).Call(
+            1,
+            argv,
+            &Nan::AsyncResource("node-pcsclite-statuschange-callback"));
     }
 
     // Do exit, after throwing last events
