@@ -19,7 +19,7 @@ void PCSCLite::init(Local<Object> target) {
     Nan::SetPrototypeTemplate(tpl, "close", Nan::New<FunctionTemplate>(Close));
 
     constructor.Reset(tpl->GetFunction(context).ToLocalChecked());
-    target->Set(Nan::New("PCSCLite").ToLocalChecked(), tpl->GetFunction(context).ToLocalChecked());
+    target->Set(context, Nan::New("PCSCLite").ToLocalChecked(), tpl->GetFunction(context).ToLocalChecked());
 }
 
 PCSCLite::PCSCLite(): m_card_context(0),
@@ -187,10 +187,10 @@ void PCSCLite::HandleReaderStatusChange(uv_async_t *handle, int status) {
             Nan::CopyBuffer(ar->readers_name, ar->readers_name_length).ToLocalChecked()
         };
 
-        Nan::Callback(Nan::New(async_baton->callback)).Call(argc, argv);
+        Nan::Call(Nan::Callback(Nan::New(async_baton->callback)), argc, argv);
     } else {
         Local<Value> argv[1] = { Nan::Error(ar->err_msg.c_str()) };
-        Nan::Callback(Nan::New(async_baton->callback)).Call(1, argv);
+        Nan::Call(Nan::Callback(Nan::New(async_baton->callback)), 1, argv);
     }
 
     // Do exit, after throwing last events

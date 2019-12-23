@@ -1,6 +1,6 @@
 {
     "name": "@paddek/pcsclite",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "engines": {
         "node": ">=4.8.0"
     },

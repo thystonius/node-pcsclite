@@ -33,7 +33,7 @@ namespace {
                  ERR_MSG_MAX_LEN,
                  "%s error: %s(0x%.8lx)",
                  method,
-                 lpMsgBuf,
+                 (LPTSTR) &lpMsgBuf,
                  result);
 
         LocalFree(lpMsgBuf);
@@ -43,7 +43,7 @@ namespace {
                  "%s error: %s(0x%.8x)",
                  method,
                  pcsc_stringify_error(result),
-                 result);   
+                 result);
 #else
         snprintf(msg,
                  ERR_MSG_MAX_LEN,
