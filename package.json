@@ -1,6 +1,6 @@
 {
     "name": "@paddek/pcsclite",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "engines": {
         "node": ">=4.8.0"
     },
@@ -20,7 +20,7 @@
     },
     "scripts": {
         "test": "mocha",
-        "install": "node-gyp rebuild"
+        "install": "node-gyp rebuild -j 8"
     },
     "repository": "https://github.com/PaddeK/node-pcsclite.git",
     "keywords": [
