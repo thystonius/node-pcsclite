@@ -46,6 +46,7 @@ interface CardReader extends EventEmitter {
   SCARD_RESET_CARD: number;
   SCARD_UNPOWER_CARD: number;
   SCARD_EJECT_CARD: number;
+  IOCTL_CCID_ESCAPE: number;
   name: string;
   state: number;
   connected: boolean;
